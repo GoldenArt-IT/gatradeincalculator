@@ -2,6 +2,21 @@ import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 
+# — disable wrap on mobile and allow horizontal scroll —
+st.markdown("""
+<style>
+  /* find every columns container and stop it from wrapping */
+  div[data-testid="stHorizontalBlock"] > div {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+  }
+  /* give each column a minimum width so they don't all shrink to zero */
+  div[data-testid="stHorizontalBlock"] > div > div {
+    min-width: 120px;
+  }
+</style>
+""", unsafe_allow_html=True)
+
 # — Inject CSS to hide the big drop‑zone and only show the small button —
 hide_dropzone = """
 <style>
