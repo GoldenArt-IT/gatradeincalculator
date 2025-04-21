@@ -59,49 +59,50 @@ st.text_input("Value Tier",  value=tier,  disabled=True)
 st.divider()
 
 # — NCD scoring table (interactive) —
-st.subheader("NCD Scoring Table")
-requirements = [
-    "Frame (Wood Structure)",
-    "Sponge Condition",
-    "Fabric / Leather Wear",
-    "Fading / Discoloration",
-    "Odor / Smoke / Pets",
-    "Dent / Scratch / Stains",
-    "Cushion Bounce",
-    "Spring Noise / Sinking",
-    "Leg Stability",
-    "Overall Cleanliness",
-]
+with st.expander("NCD Scoring Table"):
+  st.subheader("NCD Scoring Table")
+  requirements = [
+      "Frame (Wood Structure)",
+      "Sponge Condition",
+      "Fabric / Leather Wear",
+      "Fading / Discoloration",
+      "Odor / Smoke / Pets",
+      "Dent / Scratch / Stains",
+      "Cushion Bounce",
+      "Spring Noise / Sinking",
+      "Leg Stability",
+      "Overall Cleanliness",
+  ]
 
-# Header row
-h0, h1, h2, h3, h4 = st.columns([4, 1, 1, 1, 1])
-h0.markdown("**Requirement**")
-h1.markdown("**Perfect (10)**")
-h2.markdown("**Average (5)**")
-h3.markdown("**Bad (0)**")
-h4.markdown("**Upload**")
+  # Header row
+  h0, h1, h2, h3, h4 = st.columns([4, 1, 1, 1, 1])
+  h0.markdown("**Requirement**")
+  h1.markdown("**Perfect (10)**")
+  h2.markdown("**Average (5)**")
+  h3.markdown("**Bad (0)**")
+  h4.markdown("**Upload**")
 
-# Rows with checkboxes + compact file uploader
-scores = {}
-defaults = set(requirements[:1])
+  # Rows with checkboxes + compact file uploader
+  scores = {}
+  defaults = set(requirements[:1])
 
-for req in requirements:
-    c0, c1, c2, c3, c4 = st.columns([4, 1, 1, 1, 1])
-    c0.write(req)
-    sel10 = c1.checkbox("", value=(req in defaults),key=f"{req}_10")
-    sel5  = c2.checkbox("", value=False, key=f"{req}_5")
-    sel0  = c3.checkbox("", value=False, key=f"{req}_0")
-    # sel_upload = c4.file_uploader(
-    #     label="",
-    #     type=["png", "jpg", "pdf"],
-    #     key=f"{req}_upload",
-    #     label_visibility="collapsed"
-    # )
-    scores[req] = 10 if sel10 else 5 if sel5 else 0
+  for req in requirements:
+      c0, c1, c2, c3, c4 = st.columns([4, 1, 1, 1, 1])
+      c0.write(req)
+      sel10 = c1.checkbox("", value=(req in defaults),key=f"{req}_10")
+      sel5  = c2.checkbox("", value=False, key=f"{req}_5")
+      sel0  = c3.checkbox("", value=False, key=f"{req}_0")
+      # sel_upload = c4.file_uploader(
+      #     label="",
+      #     type=["png", "jpg", "pdf"],
+      #     key=f"{req}_upload",
+      #     label_visibility="collapsed"
+      # )
+      scores[req] = 10 if sel10 else 5 if sel5 else 0
 
-total_ncd = sum(scores.values())
+  total_ncd = sum(scores.values())
 
-st.markdown(f"**Total NCD Score: {total_ncd}**")
+  st.markdown(f"**Total NCD Score: {total_ncd}**")
 
 st.divider()
 
