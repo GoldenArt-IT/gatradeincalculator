@@ -149,7 +149,9 @@ with seg3:
     bonus_value = select_bonus * trade_value
     bonus_points = st.text_input("BONUS POINT", round(bonus_value, 2), disabled=True)
 
-st.markdown(f"**TOTAL TRADE IN VALUE : RM {round(trade_value - ncd_deduction_value + bonus_value, 2)}**")
+total_trade_in_value = round(trade_value - ncd_deduction_value + bonus_value, 2)
+
+st.markdown(f"**TOTAL TRADE IN VALUE : RM {total_trade_in_value}**")
 
 submitted = st.button("Save Trade-in Records")
 
@@ -162,7 +164,7 @@ if submitted:
 
   timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
-  row_data = [timestamp, model, price, tier, year_purchased, trade_in_value, ncd_deduction_rates, ncd_deduction, bonus_years, bonus_points]
+  row_data = [timestamp, model, price, tier, year_purchased, trade_in_value, ncd_deduction_rates, ncd_deduction, bonus_years, bonus_points, total_trade_in_value]
 
   for field in requirements:
     score = scores.get(field, 0)
