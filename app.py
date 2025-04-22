@@ -162,7 +162,7 @@ if submitted:
 
   timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
-  row_data = [timestamp, model, price, tier]
+  row_data = [timestamp, model, price, tier, year_purchased, trade_in_value, ncd_deduction_rates, ncd_deduction, bonus_years, bonus_points]
 
   for field in requirements:
     score = scores.get(field, 0)
