@@ -1,7 +1,9 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
-from datetime import datetime 
+from datetime import datetime
+# from upload_to_drive import upload_file_to_drive
+import base64
 
 # — disable wrap on mobile and allow horizontal scroll —
 st.markdown("""
@@ -109,10 +111,11 @@ with st.expander("NCD Scoring Table"):
       st.divider()
 
   total_ncd = sum(scores.values())
-  scores
-  for req, file in upload.items():
-    if file is not None and file.type.startswith("image/"):
-        st.image(file, caption=req, use_column_width=True)
+  # scores["Frame (Wood Structure)"]
+  # upload["Frame (Wood Structure)"]
+  # for req, file in upload.items():
+  #   if file is not None and file.type.startswith("image/"):
+  #       st.image(file, caption=req, use_column_width=True)
 
   st.markdown(f"**Total NCD Score: {total_ncd}**")
 
@@ -156,10 +159,21 @@ if submitted:
   # st.write(df_records[:0])
 
   timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-  
-  st.write(timestamp)
 
-  new_data = pd.DataFrame([[timestamp, model, price, tier, scores[0], ]], columns=df_records.columns)
+  row_data = [timestamp, model, price, tier]
+
+  for field in requirements:
+    score = scores.get(field, 0)
+    file = upload.get(field)
+    if file:
+        file_bytes = file.read()
+        b64 = base64.b64encode(file_bytes).decode()
+        image_url = f"data:image/jpeg;base64,{b64}"
+    else:
+        image_url = ""
+    row_data.extend([score, image_url])
+
+  new_data = pd.DataFrame([row_data], columns=df_records.columns)
   update_df = pd.concat([df_records, new_data], ignore_index=True)
   conn.update(worksheet="TRADE IN RECORDS", data=update_df)
   st.success("Record added successfully.")
