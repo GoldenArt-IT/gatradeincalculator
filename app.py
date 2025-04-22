@@ -47,7 +47,7 @@ df = df.dropna(how="all")
 # st.dataframe(df)
 
 # — Title —
-st.title("📲 GA TRADE CALCULATOR")
+st.title("📲 GA TRADE-IN CALCULATOR")
 
 # — Model selector —
 model = st.selectbox("Select Model:", df["MODEL"])
