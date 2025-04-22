@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+from datetime import datetime 
 
 # — disable wrap on mobile and allow horizontal scroll —
 st.markdown("""
@@ -50,12 +51,12 @@ model = st.selectbox("Select Model:", df["MODEL"])
 # — Look up and display price & tier —
 selected = df.loc[df["MODEL"] == model].iloc[0]
 price_str = selected["PRICE VALUE"]
-price = float(price_str)
+price = round(price_str, 2)
 tier  = selected["VALUE TIER"]
 
 col1, col2 = st.columns([1,1])
 with col1:
-    st.text_input("Price Value", value=price_str, disabled=True)
+    st.text_input("Price Value (RM)", value=price, disabled=True)
 with col2:
    st.text_input("Value Tier",  value=tier,  disabled=True)
 
@@ -87,6 +88,7 @@ with st.expander("NCD Scoring Table"):
 
   # Rows with checkboxes + compact file uploader
   scores = {}
+  upload = {}
   defaults = set(requirements[:1])
 
   for req in requirements:
@@ -102,10 +104,15 @@ with st.expander("NCD Scoring Table"):
           label_visibility="collapsed"
       )
       scores[req] = 10 if sel10 else 5 if sel5 else 0
+      upload[req] = sel_upload
       
       st.divider()
 
   total_ncd = sum(scores.values())
+  scores
+  for req, file in upload.items():
+    if file is not None and file.type.startswith("image/"):
+        st.image(file, caption=req, use_column_width=True)
 
   st.markdown(f"**Total NCD Score: {total_ncd}**")
 
@@ -120,23 +127,41 @@ with seg1:
     select_year_trade_value = select_year["TRADE IN VALUE"]
     trade_value = price - (price/100) * select_year_trade_value
 
-    trade_in_value = st.text_input("TRADE IN VALUE (RM)", round(trade_value, 2))
+    trade_in_value = st.text_input("TRADE IN VALUE (RM)", round(trade_value, 2), disabled=True)
 with seg2:
-    st.text_input("NCD score", value=str(total_ncd), disabled=True)
+    st.text_input("NCD SCORE", value=str(total_ncd), disabled=True)
 
     ncd_score = df.loc[df["NCD SCORE"] == total_ncd].iloc[0]
     ncd_deduction_rates = ncd_score["NCD DEDUCT RATES"]
 
     ncd_deduction_value = trade_value/100 * ncd_deduction_rates
 
-    ncd_deduction = st.text_input("NCD DEDUCTION", round(ncd_deduction_value, 2))
+    ncd_deduction = st.text_input("NCD DEDUCTION", round(ncd_deduction_value, 2), disabled=True)
 with seg3:
     select_bonus = select_year["ADDITIONAL DISCOUNTS"]
-    bonus_years  = st.text_input("Bonus (loyal >10 yrs)", select_bonus)
+    bonus_years  = st.text_input("BONUS (loyal >10 yrs)", select_bonus, disabled=True)
 
     bonus_value = select_bonus * trade_value
-    bonus_points = st.text_input("BONUS POINT", round(bonus_value, 2))
+    bonus_points = st.text_input("BONUS POINT", round(bonus_value, 2), disabled=True)
 
 st.markdown(f"**TOTAL TRADE IN VALUE : RM {round(trade_value - ncd_deduction_value + bonus_value, 2)}**")
+
+submitted = st.button("Save Trade-in Records")
+
+if submitted:
+  conn = st.connection("gsheets", type=GSheetsConnection)
+  df_records = conn.read(worksheet="TRADE IN RECORDS", ttl=1)
+  df_records = df_records.dropna(how="all")
+
+  # st.write(df_records[:0])
+
+  timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+  
+  st.write(timestamp)
+
+  new_data = pd.DataFrame([[timestamp, model, price, tier, scores[0], ]], columns=df_records.columns)
+  update_df = pd.concat([df_records, new_data], ignore_index=True)
+  conn.update(worksheet="TRADE IN RECORDS", data=update_df)
+  st.success("Record added successfully.")
 
 st.divider()
