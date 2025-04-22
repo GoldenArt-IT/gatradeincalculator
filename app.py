@@ -4,6 +4,8 @@ import pandas as pd
 from datetime import datetime
 # from upload_to_drive import upload_file_to_drive
 import base64
+from PIL import Image
+import io
 
 # — disable wrap on mobile and allow horizontal scroll —
 st.markdown("""
@@ -166,8 +168,16 @@ if submitted:
     score = scores.get(field, 0)
     file = upload.get(field)
     if file:
-        file_bytes = file.read()
-        b64 = base64.b64encode(file_bytes).decode()
+        img = Image.open(file)
+        img = img.resize((300, 300))
+
+        # ✅ Convert to byte stream
+        buffered = io.BytesIO()
+        img.save(buffered, format="JPEG")  # or "PNG"
+        img_bytes = buffered.getvalue()
+
+        # ✅ Convert to base64 string
+        b64 = base64.b64encode(img_bytes).decode()
         image_url = f"data:image/jpeg;base64,{b64}"
     else:
         image_url = ""
