@@ -96,18 +96,25 @@ with st.expander("NCD Scoring Table"):
   defaults = set(requirements[:1])
 
   for req in requirements:
-      c0, c1, c2, c3, c4 = st.columns([4, 1, 1, 1, 1])
+      c0, c1, c2, c3, c4, c5, c6, c7 = st.columns([4, 1, 1, 1, 1, 1, 1, 1])
       c0.write(req)
       sel10 = c1.checkbox("Perfect (10 points)", value=(req in defaults),key=f"{req}_10")
-      sel5  = c2.checkbox("Average (5 points)", value=False, key=f"{req}_5")
-      sel0  = c3.checkbox("Bad (0 points)", value=False, key=f"{req}_0")
-      sel_upload = c4.file_uploader(
+      sel8  = c2.checkbox("Semi Perfect (8 points)", value=False, key=f"{req}_8")
+      sel6  = c3.checkbox("Average (6 points)", value=False, key=f"{req}_6")
+      sel4  = c4.checkbox("Below Average (4 points)", value=False, key=f"{req}_4")
+      sel2  = c5.checkbox("Not Good (2 points)", value=False, key=f"{req}_2")
+      sel0  = c6.checkbox("Bad (0 points)", value=False, key=f"{req}_0")
+      sel_upload = c7.file_uploader(
           label="",
           type=["png", "jpg", "pdf"],
           key=f"{req}_upload",
           label_visibility="collapsed"
       )
-      scores[req] = 10 if sel10 else 5 if sel5 else 0
+      
+      if sel_upload is not None:
+         st.image(sel_upload)
+
+      scores[req] = 10 if sel10 else 8 if sel8 else 6 if sel6 else 4 if sel4 else 2 if sel2 else 0
       upload[req] = sel_upload
       
       st.divider()
