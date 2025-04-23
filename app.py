@@ -178,11 +178,11 @@ if submitted:
     file = upload.get(field)
     if file:
         img = Image.open(file)
-        img = img.resize((300, 300))
+        img = img.resize((320, 240)) # image reolution
 
         # ✅ Convert to byte stream
         buffered = io.BytesIO()
-        img.save(buffered, format="JPEG")  # or "PNG"
+        img.save(buffered, format="JPEG", optimize=True, quality=90)  # or "PNG"
         img_bytes = buffered.getvalue()
 
         # ✅ Convert to base64 string
