@@ -178,11 +178,12 @@ if submitted:
     file = upload.get(field)
     if file:
         img = Image.open(file)
-        img = img.resize((320, 240)) # image reolution
+        img = img.convert("RGB")  # Convert to RGB if not already in that mode
+        img = img.resize((320, 240)) # Image resolution
 
         # ✅ Convert to byte stream
         buffered = io.BytesIO()
-        img.save(buffered, format="JPEG", optimize=True, quality=90)  # or "PNG"
+        img.save(buffered, format="WEBP", optimize=True, quality=95, subsampling=0, progressive=True)  # or "PNG"
         img_bytes = buffered.getvalue()
 
         # ✅ Convert to base64 string
@@ -192,9 +193,10 @@ if submitted:
         image_url = ""
     row_data.extend([score, image_url])
 
-  new_data = pd.DataFrame([row_data], columns=df_records.columns)
+  new_index = df_records.index.max() + 1 if not df_records.empty else 0
+  new_data = pd.DataFrame([row_data], columns=df_records.columns, index=[new_index])
   update_df = pd.concat([df_records, new_data], ignore_index=True)
   conn.update(worksheet="TRADE IN RECORDS", data=update_df)
-  st.success("Record added successfully.")
+  st.success("Record updated successfully.")
 
 st.divider()
