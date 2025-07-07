@@ -1,47 +1,163 @@
-# 📲 GA Trade-In Calculator (Streamlit App)
+# 📲 GA Trade-In Calculator
 
-## 🔧 Overview
-This Streamlit app calculates trade-in values for GoldenArt sofa models based on:
-
-- Model price and tier
-- Year of purchase
-- NCD (Non-Conformance Deduction) scoring
-- Loyalty bonus (>10 years)
-- File uploads for visual proof
-
-It writes trade-in records into a connected Google Sheet, including scores and base64 image data for review purposes.
+A **Streamlit** app to calculate trade-in values of products dynamically based on model, purchase year, NCD scoring, and bonus discounts. Integrates live data from **Google Sheets** and saves trade-in records with uploaded images.
 
 ---
 
-## 💡 Key Features
-- Dropdown model selection from Google Sheets
-- NCD Scoring Table with:
-  - Point-based checkboxes (Perfect/Average/Bad)
-  - File uploader for images (JPEG/PNG/PDF)
-- Auto-calculation:
-  - Trade-in value after depreciation
-  - NCD deduction
-  - Loyalty bonus
-  - Final value
-- Save button to append data to `TRADE IN RECORDS` sheet
-- Image conversion to Base64 for direct embedding into Sheets
+✅ **Access the App:**  
+[👉 **GA Trade-In Calculator**](https://ga-trade-in-calculator.streamlit.app/)
 
 ---
 
-## 🧠 How It Works
+## 📑 Table of Contents
 
-1. User selects model → app fetches price & tier
-2. User scores furniture condition → NCD scores calculated
-3. User inputs year purchased → value depreciated accordingly
-4. Loyalty bonus applied if eligible
-5. Final value displayed
-6. Upon save:
-   - App encodes uploaded images to base64
-   - App logs all data into the Google Sheet
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Example Workflow](#example-workflow)
+- [Project Structure](#project-structure)
+- [Reference](#reference)
 
 ---
 
-## 🛠️ Run the App
+## ✨ Features
 
-```bash
-streamlit run app.py
+- Model selection with pre-loaded price and tier
+- Interactive NCD scoring table with image upload per criterion
+- Year of purchase selection to compute trade-in depreciation
+- Automatic NCD deductions and bonus calculation
+- Real-time total trade-in value computation
+- Saves trade-in records including scores and images to Google Sheets
+
+---
+
+## ⚙️ Installation
+
+1. **Clone the repository**
+
+   ```
+   git clone https://github.com/your-org/ga-trade-in-calculator.git
+   cd ga-trade-in-calculator
+   ```
+
+2. **Install dependencies**
+
+   ```
+   pip install -r requirements.txt
+   ```
+
+   Example `requirements.txt`:
+
+   ```
+   streamlit
+   streamlit_gsheets
+   pandas
+   pillow
+   ```
+
+3. **Create `secrets.toml`**
+
+   ```toml
+   [connections.gsheets]
+   email = "your_service_account_email"
+   private_key = "-----BEGIN PRIVATE KEY-----\n..."
+
+   [allowed_users]
+   emails = ["user1@example.com", "user2@example.com"]
+   ```
+
+4. **Run the app**
+
+   ```
+   streamlit run app.py
+   ```
+
+---
+
+## ⚙️ Configuration
+
+- **Google Sheets**
+  - Must contain:
+    - A `DATA` worksheet with columns:
+      - MODEL
+      - PRICE VALUE
+      - VALUE TIER
+      - YEARS OF PURCHASED
+      - TRADE IN VALUE
+      - ADDITIONAL DISCOUNTS
+      - NCD SCORE
+      - NCD DEDUCT RATES
+    - A `TRADE IN RECORDS` worksheet to store saved records.
+
+- **NCD Requirements**
+  - Frame (Wood Structure)
+  - Sponge Condition
+  - Fabric / Leather Wear
+  - Fading / Discoloration
+  - Odor / Smoke / Pets
+  - Dent / Scratch / Stains
+  - Cushion Bounce
+  - Spring Noise / Sinking
+  - Leg Stability
+  - Overall Cleanliness
+
+---
+
+## 🛠️ Usage
+
+1. **Select a Model**
+   - Displays price and tier automatically.
+
+2. **Fill NCD Scores**
+   - For each requirement, pick a score and optionally upload an image.
+
+3. **Enter Year of Purchase**
+   - Determines depreciation and bonus.
+
+4. **Review Calculations**
+   - Trade-in value, deductions, and total are computed live.
+
+5. **Save Record**
+   - Press **Save Trade-in Records** to store results in Google Sheets.
+
+---
+
+## 💡 Example Workflow
+
+**Scenario:**
+
+- Model: A1 Classic Sofa
+- Year Purchased: 8
+- NCD Scores: Mostly Average
+- Bonus: Loyalty bonus applied
+- Uploaded images for scratches and fading
+
+**Outcome:**
+
+- Trade-in Value: RM1,500
+- NCD Deduction: RM300
+- Bonus Points: RM100
+- **Total Trade-In Value:** RM1,300
+
+---
+
+## 📂 Project Structure
+
+```
+ga-trade-in-calculator/
+├── app.py              # Main Streamlit app
+├── requirements.txt    # Dependencies
+└── README.md           # This README
+```
+
+---
+
+## 📚 Reference
+
+- [Streamlit Documentation](https://docs.streamlit.io)
+- [streamlit_gsheets](https://github.com/streamlit/streamlit-gsheets)
+- [Google Sheets API](https://developers.google.com/sheets/api)
+- [Pillow Docs](https://pillow.readthedocs.io)
+
+---
